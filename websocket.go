@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -20,13 +21,16 @@ var upgrader = websocket.Upgrader{
 
 func startListening() {
 	mux := pat.New()
-	port := ":30"
+	port := ":8881"
 	srv := http.Server{
 		Addr:    port,
 		Handler: mux,
 	}
 	mux.Get("/", http.HandlerFunc(websocketLoop))
-	go srv.ListenAndServe()
+	go func() {
+		err := srv.ListenAndServe()
+		fmt.Println(err)
+	}()
 }
 
 func websocketLoop(w http.ResponseWriter, r *http.Request) {

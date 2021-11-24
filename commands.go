@@ -50,4 +50,7 @@ func dm(c *commandCtx) {
 		User:    c.User.Username,
 		Message: msg,
 	})
+	c.User.sendResponse(receiveMessageOp, SendIdentify{
+		Code: codeSuccess,
+	})
 }
