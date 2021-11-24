@@ -86,5 +86,12 @@ func (u *User) handleMessages(m *Message) {
 			return
 		}
 		packet.Handle(u)
+	case receiveFileOp:
+		packet := &File{}
+		err = json.Unmarshal(d, &packet)
+		if err != nil {
+			return
+		}
+		packet.Handle(u)
 	}
 }

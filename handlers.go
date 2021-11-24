@@ -66,3 +66,23 @@ func (m *CreateMessage) Handle(u *User) {
 	})
 	u.receiveMessageResponse(codeSuccess)
 }
+
+func (m *File) Handle(u *User) {
+	if u.Username == "" {
+		u.receiveFileResponse(codeError)
+		return
+	}
+
+	target, found := connections.Get(m.User)
+	if !found {
+		u.receiveFileResponse(codeError)
+		return
+	}
+
+	target.sendResponse(sendFileOp, File{
+		Name: m.Name,
+		Data: m.Data,
+		User: u.Username,
+	})
+	u.receiveFileResponse(codeSuccess)
+}

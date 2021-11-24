@@ -7,6 +7,8 @@ const (
 	identifyOp = iota
 	receiveMessageOp
 	sendMessageOp
+	receiveFileOp
+	sendFileOp
 )
 
 // Defines messages type
@@ -62,6 +64,12 @@ type SendMessage struct {
 	User     string   `json:"user,omitempty"`
 	Message  string   `json:"message,omitempty"`
 	Messages []string `json:"messages,omitempty"`
+}
+
+type File struct {
+	Name string `json:"name"`
+	User string `json:"user,omitempty"`
+	Data []byte `json:"data,omitempty"`
 }
 
 // Server side commands

@@ -22,6 +22,13 @@ func (u *User) receiveMessageResponse(code int) {
 	})
 }
 
+// Used to respond to a send file to a user.
+func (u *User) receiveFileResponse(code int) {
+	u.sendResponse(receiveFileOp, SendIdentify{
+		Code: code,
+	})
+}
+
 // Used to send a classic message to a user.
 func (u *User) sendMessageClassic(message string) {
 	u.sendResponse(sendMessageOp, SendMessage{
