@@ -21,7 +21,7 @@ var upgrader = websocket.Upgrader{
 
 func startListening() {
 	mux := pat.New()
-	port := ":8881"
+	port := ":30"
 	srv := http.Server{
 		Addr:    port,
 		Handler: mux,
