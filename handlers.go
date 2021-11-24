@@ -9,12 +9,12 @@ func (i *CreateIdentify) Handle(u *User) {
 		u.identifyResponse(codeError)
 		return
 	}
+	u.Username = i.Username
 	connections.Broadcast(sendMessageOp, SendMessage{
 		Type: messageConnection,
 		User: u.Username,
 	})
 	connections = append(connections, u)
-	u.Username = i.Username
 	u.identifyResponse(codeSuccess)
 }
 

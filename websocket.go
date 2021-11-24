@@ -46,16 +46,13 @@ func websocketLoop(w http.ResponseWriter, r *http.Request) {
 		msg := &Message{}
 		err := c.ReadJSON(msg)
 		if err != nil {
-			if _, ok := err.(*websocket.CloseError); ok {
-				// Player has disconnected here
-				currentUser.ConnectionClosed = true
-				if currentUser.Username != "" {
-					connections.Remove(currentUser.Username)
-					connections.Broadcast(sendMessageOp, SendMessage{
-						Type: messageDisconnection,
-						User: currentUser.Username,
-					})
-				}
+			currentUser.ConnectionClosed = true
+			if currentUser.Username != "" {
+				connections.Remove(currentUser.Username)
+				connections.Broadcast(sendMessageOp, SendMessage{
+					Type: messageDisconnection,
+					User: currentUser.Username,
+				})
 			}
 			connections.Remove(currentUser.Username)
 			return
