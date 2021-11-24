@@ -1,5 +1,9 @@
 package main
 
+import (
+	"strings"
+)
+
 func (i *CreateIdentify) Handle(u *User) {
 	if u.Username != "" {
 		u.identifyResponse(codeError)
@@ -23,10 +27,42 @@ func (m *CreateMessage) Handle(u *User) {
 		u.receiveMessageResponse(codeError)
 		return
 	}
+
+	if m.Type == messageClassic {
+		if strings.HasPrefix(m.Message, commandPrefix) || strings.HasPrefix(m.Message, "@") {
+			input := strings.Replace(m.Message, "/", "", 1)
+			splt := strings.Split(input, " ")
+			if len(splt) == 0 {
+				return
+			}
+			command := splt[0]
+			if strings.HasPrefix(command, "@") {
+				splt = append([]string{splt[0], strings.Replace(command, "@", "", 1)}, splt[1:]...)
+				command = "@"
+			}
+			command = strings.ToLower(command)
+			call, found := commands[command]
+			if !found {
+				return
+			}
+			args := []string{}
+			if len(splt) > 1 {
+				args = splt[1:]
+			}
+			ctx := &commandCtx{
+				Args: args,
+				User: u,
+			}
+			call(ctx)
+			return
+		}
+	}
+
 	connections.Broadcast(sendMessageOp, SendMessage{
-		Type:    messageClassic,
-		User:    u.Username,
-		Message: m.Message,
+		Type:     m.Type,
+		User:     u.Username,
+		Message:  m.Message,
+		Messages: m.Messages,
 	})
 	u.receiveMessageResponse(codeSuccess)
 }

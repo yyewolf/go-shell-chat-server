@@ -13,6 +13,7 @@ var commandPrefix = getEnv("prefix", "/")
 func main() {
 	fmt.Println("Starting server...")
 	startListening()
+	commandLoader()
 	fmt.Println("Server OK !")
 
 	// Wait here until CTRL-C or other term signal is received.

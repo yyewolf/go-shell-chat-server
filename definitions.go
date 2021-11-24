@@ -15,6 +15,7 @@ const (
 	messageConnection
 	messageDisconnection
 	messageMultiline
+	messageDM
 )
 
 // Defines codes
@@ -61,4 +62,12 @@ type SendMessage struct {
 	User     string   `json:"user,omitempty"`
 	Message  string   `json:"message,omitempty"`
 	Messages []string `json:"messages,omitempty"`
+}
+
+// Server side commands
+var commands map[string]func(*commandCtx)
+
+type commandCtx struct {
+	Args []string
+	User *User
 }
