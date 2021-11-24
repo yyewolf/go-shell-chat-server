@@ -40,28 +40,32 @@ func websocketLoop(w http.ResponseWriter, r *http.Request) {
 		Connection: c,
 	}
 	for {
-		_, message, err := c.ReadMessage()
+		if currentUser.ConnectionClosed {
+			return
+		}
+		msg := &Message{}
+		err := c.ReadJSON(msg)
 		if err != nil {
 			if _, ok := err.(*websocket.CloseError); ok {
+				// Player has disconnected here
 				currentUser.ConnectionClosed = true
 				if currentUser.Username != "" {
-					// Player has disconnected here
-
+					connections.Remove(currentUser.Username)
+					connections.Broadcast(sendMessageOp, SendMessage{
+						Type: messageDisconnection,
+						User: currentUser.Username,
+					})
 				}
 			}
-			break
+			connections.Remove(currentUser.Username)
+			return
 		}
-		currentUser.handleMessages(message)
+		currentUser.handleMessages(msg)
 	}
 }
 
 // handleMessages handles messages coming from the client
-func (u *User) handleMessages(data []byte) {
-	m := &Message{}
-	err := json.Unmarshal(data, m)
-	if err != nil {
-		return
-	}
+func (u *User) handleMessages(m *Message) {
 	d, err := json.Marshal(m.Data)
 	if err != nil {
 		return
@@ -69,17 +73,17 @@ func (u *User) handleMessages(data []byte) {
 	switch m.Op {
 	case identifyOp:
 		packet := &CreateIdentify{}
-		err = json.Unmarshal(d, &d)
+		err = json.Unmarshal(d, &packet)
 		if err != nil {
 			return
 		}
-		packet.Handle()
+		packet.Handle(u)
 	case receiveMessageOp:
 		packet := &CreateMessage{}
-		err = json.Unmarshal(d, &d)
+		err = json.Unmarshal(d, &packet)
 		if err != nil {
 			return
 		}
-		packet.Handle()
+		packet.Handle(u)
 	}
 }

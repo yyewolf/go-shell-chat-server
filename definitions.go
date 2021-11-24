@@ -39,26 +39,26 @@ var connections Pool
 // Defines the messages standard
 type Message struct {
 	Op   int         `json:"op"`
-	Data interface{} `json:"data"`
+	Data interface{} `json:"data,omitempty"`
 }
 
 type CreateIdentify struct {
-	Username string `json:"username"`
+	Username string `json:"username,omitempty"`
 }
 
 type CreateMessage struct {
-	Type     string   `json:"type"`
-	Message  string   `json:"message"`
-	Messages []string `json:"messages"`
+	Type     int      `json:"type"`
+	Message  string   `json:"message,omitempty"`
+	Messages []string `json:"messages,omitempty"`
 }
 
-type Identify struct {
-	Code int `json:"code"`
+type SendIdentify struct {
+	Code int `json:"code,omitempty"`
 }
 
 type SendMessage struct {
-	Type     string   `json:"type"`
-	User     string   `json:"user"`
-	Message  string   `json:"message"`
-	Messages []string `json:"messages"`
+	Type     int      `json:"type"`
+	User     string   `json:"user,omitempty"`
+	Message  string   `json:"message,omitempty"`
+	Messages []string `json:"messages,omitempty"`
 }
